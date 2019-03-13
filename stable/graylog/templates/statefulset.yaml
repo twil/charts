@@ -68,6 +68,13 @@ spec:
               mountPath: /usr/share/graylog/data/journal
             - mountPath: /k8s
               name: kubectl
+      initContainers:
+      - name: fix-journal-volume-uid-gid
+        image: busybox
+        command: ["sh", "-c", "chown -R graylog:graylog /usr/share/graylog/data/journal"]
+        volumeMounts:
+        - name: journal
+          mountPath: /usr/share/graylog/data/journal
       containers:
         - name: graylog-server
           image: "{{ .Values.graylog.image.repository }}"
