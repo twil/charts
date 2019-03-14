@@ -60,7 +60,8 @@ spec:
             - -c
             - rm -rf /usr/share/graylog/data/journal/lost+found &&
               wget https://storage.googleapis.com/kubernetes-release/release/v1.11.4/bin/linux/amd64/kubectl -O /k8s/kubectl &&
-              chmod +x /k8s/kubectl
+              chmod +x /k8s/kubectl &&
+              chown -R graylog:graylog /usr/share/graylog/data/journal
           securityContext:
             privileged: true
           volumeMounts:
@@ -68,13 +69,6 @@ spec:
               mountPath: /usr/share/graylog/data/journal
             - mountPath: /k8s
               name: kubectl
-      initContainers:
-      - name: fix-journal-volume-uid-gid
-        image: busybox
-        command: ["sh", "-c", "chown -R graylog:graylog /usr/share/graylog/data/journal"]
-        volumeMounts:
-        - name: journal
-          mountPath: /usr/share/graylog/data/journal
       containers:
         - name: graylog-server
           image: "{{ .Values.graylog.image.repository }}"
