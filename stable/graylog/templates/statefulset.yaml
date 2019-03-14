@@ -55,13 +55,14 @@ spec:
           image: "busybox"
           imagePullPolicy: IfNotPresent
           # Graylog journal will recursive in every subdirectories. Any invalid format directories will cause errors
+          # We need UID:GID numerical here
           command:
             - /bin/sh
             - -c
             - rm -rf /usr/share/graylog/data/journal/lost+found &&
               wget https://storage.googleapis.com/kubernetes-release/release/v1.11.4/bin/linux/amd64/kubectl -O /k8s/kubectl &&
               chmod +x /k8s/kubectl &&
-              chown -R graylog:graylog /usr/share/graylog/data/journal
+              chown -R 1100:1100 /usr/share/graylog/data/journal
           securityContext:
             privileged: true
           volumeMounts:
